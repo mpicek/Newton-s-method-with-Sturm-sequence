@@ -10,6 +10,10 @@ vector<double> sturm[10000];
 double maxA = 0, maxB = 0;
 int maxExp = 0;
 bool lastSequence = 0;
+int numberOfIntervals = 10000;
+int numberOfSequences = 0;
+
+map<double, double> intervalsWithRoots;
 
 
 void throwError(){
@@ -189,10 +193,39 @@ void printSturmSequence(int numberOfSequence){
 	cout << "f" << numberOfSequence << "(x) = ";
 	per(in, sturm[numberOfSequence].size()-1){
 		if(sturm[numberOfSequence][in] != 0){
-			cout << sturm[numberOfSequence][in] << "x" << in << " ";
+			if(sturm[numberOfSequence][in] > 0 && in != sturm[numberOfSequence].size()-1) cout << "+";
+			if(in == 1){
+				cout << sturm[numberOfSequence][in] << "x" << " ";	
+			}
+			else if(in == 0){
+				cout << sturm[numberOfSequence][in];
+			}
+			else{
+				cout << sturm[numberOfSequence][in] << "x" << in << " ";
+			}
 		}
 	}
 	cout << endl;
+}
+
+double evaluate(int sequence, double x){
+	double res = 0;
+	for(int i = sturm[sequence].size()-1; i>=0;i--){
+		res = x*(sturm[sequence][i]+res);
+	}
+	res /= x;
+	return res;
+}
+
+int evaluateForOneValue(double x){
+	double lastVal = evaluate(0,x);
+	int changes = 0;
+	for(int in = 0; in <= numberOfSequences; in++){
+		double val = evaluate(in, x);
+		if((lastVal >= 0 && val < 0) || (lastVal < 0 && val >= 0)) changes++;
+		lastVal = val;
+	}
+	return changes;
 }
 
 
@@ -203,18 +236,40 @@ int main(){
 	getFirstSequence();
 	getDerivative();
 
-	cout << "Maximal interval: <" <<maxA << "  " << maxB << ">" << endl;
-	
+	cout << endl << "Maximal interval: <" <<maxA << "  " << maxB << ">" << endl;
+	//cout << "How many intervals to Sturm sequence? ";
+	//cin  >> numberOfIntervals;
+	//cout << endl;
+
 	printSturmSequence(0);
 	printSturmSequence(1);
 
 
-	i = 2;	
+	numberOfSequences = 2;	
 	while(!lastSequence){
-		getNextSequence(i);
-		printSturmSequence(i);
-		i++;
+		getNextSequence(numberOfSequences);
+		printSturmSequence(numberOfSequences);
+		numberOfSequences++;
 	}
+	numberOfSequences--;
+
+
+	int lastChanges = evaluateForOneValue(maxA);
+	for(double x = maxA; x <= maxB; x+=(maxB-maxA)/numberOfIntervals){
+		int changes = evaluateForOneValue(x);
+		if(lastChanges != changes){
+			if(abs(lastChanges-changes) > 1) cout << abs(lastChanges-changes) << " more roots in one interval " << endl;
+			intervalsWithRoots.insert(make_pair(x, x+(maxB-maxA)/numberOfIntervals));
+		}
+		lastChanges = changes;
+	}
+	
+	cout << endl << "Intervals with roots:" << endl;
+	for(auto interv : intervalsWithRoots){
+		cout << "(" << interv.first << " " << interv.second << ")" << endl;
+	}
+
+
 
 	return 0;
 }
