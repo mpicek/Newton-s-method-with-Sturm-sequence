@@ -12,6 +12,7 @@ int maxExp = 0;
 bool lastSequence = 0;
 int numberOfIntervals = 10000;
 int numberOfSequences = 0;
+double precision = 0.00001;
 
 map<double, double> intervalsWithRoots;
 
@@ -110,6 +111,12 @@ void readInput(){
 				expo *= 10;
 			}
 		}
+	}
+	if(ex.empty()){
+		for(int in = 0; in <= expo/10; in++){
+			ex.push_back(0);
+		}
+		maxExp = expo/10;
 	}
 	ex[expo/10] = coef/(10*pow(10, zeros))*(-1+2*sign);
 }
@@ -228,6 +235,18 @@ int evaluateForOneValue(double x){
 	return changes;
 }
 
+void newton(){
+	for(auto interv : intervalsWithRoots){
+		double lastX = interv.first;
+		double x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
+		while(abs(lastX-x) > precision){
+			lastX = x;
+			x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
+		}
+		cout << "Root: x = " << x << endl;
+	}
+}
+
 
 int main(){
 	int i, in;
@@ -237,9 +256,6 @@ int main(){
 	getDerivative();
 
 	cout << endl << "Maximal interval: <" <<maxA << "  " << maxB << ">" << endl;
-	//cout << "How many intervals to Sturm sequence? ";
-	//cin  >> numberOfIntervals;
-	//cout << endl;
 
 	printSturmSequence(0);
 	printSturmSequence(1);
@@ -269,7 +285,9 @@ int main(){
 		cout << "(" << interv.first << " " << interv.second << ")" << endl;
 	}
 
+	cout << endl << "Roots:" << endl;	
 
+	newton();
 
 	return 0;
 }
