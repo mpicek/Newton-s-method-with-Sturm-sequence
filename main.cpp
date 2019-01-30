@@ -21,10 +21,6 @@ int numberOfSequences = 0;
 double precision = 0.00001;
 
 map<double, double> intervalsWithRoots;
-double abs(double a){
-	if(a < 0) a*=(-1);
-	return a;
-}
 
 void throwError(){
 	cout << "debilku" << endl;
@@ -227,6 +223,10 @@ int main(){
 	cout << endl << "Roots:" << endl;	
 
 	newton();
+
+#ifdef _WIN32
+	system("pause");
+#endif
 
 	return 0;
 }
