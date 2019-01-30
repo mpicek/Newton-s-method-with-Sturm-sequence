@@ -15,7 +15,7 @@ vector<double> sturm[10000];
 double maxA = 0, maxB = 0;
 int maxExp = 0;
 bool lastSequence = 0;
-int numberOfIntervals = 10000;
+int numberOfIntervals = 100000;
 int numberOfSequences = 0;
 double precision = 0.00001;
 
@@ -211,6 +211,7 @@ void printSturmSequence(int numberOfSequence){
 			}
 		}
 	}
+	if(sturm[numberOfSequence].size() == 0) cout << 0 << endl;
 	cout << endl;
 }
 
@@ -220,6 +221,7 @@ double evaluate(int sequence, double x){
 		res = x*(sturm[sequence][i]+res);
 	}
 	if(x != 0) res /= x;
+	if (res == -0) res = 0;
 	return res;
 }
 
@@ -229,6 +231,7 @@ int evaluateForOneValue(double x){
 	for(int in = 0; in <= numberOfSequences; in++){
 		double val = evaluate(in, x);
 		if((lastVal >= 0 && val < 0) || (lastVal < 0 && val >= 0)) changes++;
+		if(in == numberOfSequences && lastVal < 0 && val == 0) changes--;
 		lastVal = val;
 	}
 	return changes;
@@ -281,7 +284,7 @@ int main(){
 		lastChanges = changes;
 	}
 	
-	cout << endl << "Intervals with roots:" << endl;
+	cout << "Intervals with roots:" << endl;
 	for(auto interv : intervalsWithRoots){
 		cout << "(" << interv.first << " " << interv.second << ")" << endl;
 	}
