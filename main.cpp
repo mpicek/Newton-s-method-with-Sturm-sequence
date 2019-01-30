@@ -1,4 +1,9 @@
-#include <bits/stdc++.h>
+#include <iostream>
+#include <vector>
+#include <map>
+#include <stdlib.h>
+#include <math.h>
+
 #define rep(a, b) for(a=0;a<b;a++)
 #define per(a, b) for(a=b;a>=0;a--)
 
@@ -15,7 +20,10 @@ int numberOfSequences = 0;
 double precision = 0.00001;
 
 map<double, double> intervalsWithRoots;
-
+double abs(double a){
+	if(a < 0) a*=(-1);
+	return a;
+}
 
 void throwError(){
 	cout << "debilku" << endl;
@@ -157,22 +165,14 @@ void getNextSequence(int numberOfSequence){
 
 	int e;
 	double k;
-	//cout << endl << maxA << " " << maxB << endl;
+	
 	while(maxA >= maxB){
-		//cout << "tu";
-		//cout << maxA << " " << maxB << endl;
-
-
 		e = maxA - maxB;
 		k = sturm[numberOfSequence][maxA]/sturm[numberOfSequence-1][maxB];
 
-		//cout << k << "  " << e << endl;
 		for(int in = maxB; in >= 0; in--){
-			//cout << sturm[numberOfSequence][in+e] << " - " <<k << " * " << sturm[numberOfSequence-1][in]; 
 			sturm[numberOfSequence][in+e] -= k*sturm[numberOfSequence-1][in];
-			//cout << " = " << sturm[numberOfSequence][in+e] << endl;
 		}
-		//cout << endl << sturm[numberOfSequence][maxA] << endl;
 		while(sturm[numberOfSequence][maxA] == 0){
 			maxA--;
 			if(maxA < 0){
@@ -182,7 +182,6 @@ void getNextSequence(int numberOfSequence){
 	}
 
 	while(sturm[numberOfSequence].back() == 0){
-		//cout << sturm[numberOfSequence].back() << "  " << sturm[numberOfSequence].size() << endl;
 		sturm[numberOfSequence].pop_back();
 		if(sturm[numberOfSequence].size() == 0){
 			break;
@@ -220,7 +219,7 @@ double evaluate(int sequence, double x){
 	for(int i = sturm[sequence].size()-1; i>=0;i--){
 		res = x*(sturm[sequence][i]+res);
 	}
-	res /= x;
+	if(x != 0) res /= x;
 	return res;
 }
 
@@ -239,9 +238,11 @@ void newton(){
 	for(auto interv : intervalsWithRoots){
 		double lastX = interv.first;
 		double x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
+		double shit = (evaluate(0, lastX)/evaluate(1, lastX));
 		while(abs(lastX-x) > precision){
 			lastX = x;
-			x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
+			if(evaluate(1, lastX) == 0) x = lastX - (evaluate(0, lastX)/0.0000001);
+			else x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
 		}
 		cout << "Root: x = " << x << endl;
 	}
