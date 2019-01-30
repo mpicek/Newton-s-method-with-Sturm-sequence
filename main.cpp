@@ -3,6 +3,7 @@
 #include <map>
 #include <stdlib.h>
 #include <math.h>
+#include <regex>
 
 #define rep(a, b) for(a=0;a<b;a++)
 #define per(a, b) for(a=b;a>=0;a--)
@@ -30,103 +31,40 @@ void throwError(){
 }
 
 void readInput(){
+	string line;
+	getline(cin, line);
+	regex rgx(R"(([+-]|^)\s*((?:\d+\.\d+|\d*))([xX]?)(\d*))",
+		regex_constants::ECMAScript);
+	sregex_iterator next(line.begin(), line.end(), rgx);
+	sregex_iterator end;
+	while (next != end) {
+		smatch match = *next;
+		string match_str = match.str(0);
+		int sign = 1;
+		if (match.str(1) == "-") sign = -1;
+		// is there an x?
+		bool x = match.str(3) != "";
+		// coefficient
+		double k = 1.0;
+		if (match.str(2) != "")
+			k = atof(match.str(2).c_str());
+		// power (exponent)
+		int p = x;
+		if (match.str(4) != "")
+			p = atoi(match.str(4).c_str());
 
-	int phase = 0, i; //0 = read sign; 1 = read number; 2 = read exp
-	
-	string input;
-	cin >> input;
-	bool sign;
-	double coef = 0;
-	bool wasDot = 0;
-	int zeros = 0;
-	double expo = 0;
+		if(p > maxExp) maxExp = p;
 
-	for(i = 0; i<input.length(); i++){ //reading chars
-		if(phase == 0){
-			if(i == 0){
-				if(input[0] != '+' && input[0] != '-'){ //first symbol not a sign (2x2+3x+5)
-					sign = 1;
-					i--;
-				}
-				else{
-					if(input[i] == '+'){
-						sign = 1;
-					}
-					else if(input[i] == '-'){
-						sign = 0;
-					}
-					else{
-						throwError();
-					}
-				}
-			}
-
-			else{
-				if(input[i] == '+'){
-					sign = 1;
-				}
-				else if(input[i] == '-'){
-					sign = 0;
-				}
-				else{
-					throwError();
-				}
-			}
-			phase = 1;
-			coef = 0;
-			expo = 0;
-			wasDot = 0;
-			zeros = 0;
+		if (p + 1 > ex.size()) {
+			for (int i = ex.size(); i < p + 1; i++) ex.push_back(0);
 		}
 
-		else if(phase == 1){
-	
-	
-			if(input[i] == 'x' || input[i] == 'X'){ //is X
-				phase = 2;
-			}
-			else if(input[i] == '.'){
-				wasDot = 1;
-			}
-			else if(input[i] < 48 && input[i] > 57){ //some shit
-				throwError();
-			}
-			else{ // is number
-				coef += input[i]-48;
-				coef *= 10;
-				if(wasDot) zeros++;
-			}
-		}
-		else{
-
-			if(input[i] == '-' || input[i] == '+'){ //is another number
-				phase = 0;
-				if(ex.empty()){
-					for(int in = 0; in <= expo/10; in++){
-
-						ex.push_back(0);
-					}
-					maxExp = expo/10;
-				}
-				ex[expo/10] = coef/(10*pow(10, zeros))*(-1+2*sign); //*(-1+2*sign) = to get there the sign (+ or -)
-				i--;
-			}
-			else if(input[i] < 48 && input[i] > 57){ //some shit
-				throwError();
-			}
-			else{ // is number
-				expo += input[i]-48;
-				expo *= 10;
-			}
-		}
+		ex[p] = sign * k;
+		next++;
 	}
-	if(ex.empty()){
-		for(int in = 0; in <= expo/10; in++){
-			ex.push_back(0);
-		}
-		maxExp = expo/10;
-	}
-	ex[expo/10] = coef/(10*pow(10, zeros))*(-1+2*sign);
+	// prints out all coefficients (for testing):
+	// int i = 0;
+	// rep(i, ex.size()) cout << i << ": " << ex[i] << endl;
 }
 
 void getMaxInterval(){

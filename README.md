@@ -5,13 +5,19 @@
 
 ### Czech description (English below)
 Zadávejte vstup v tomto formátu:
-5x3-2.65x2+3x1-2.75x0
- 1) __Je nutno zadávat vstup od členu s největším exponentem po nejmenší__
- 2) U prvního členu může být +, - nebo nic, v tom případě je člen kladný
- 3) Pro desetinná místa použijte tečku
- 4) __Nezadávejte nikde mezery__
- 5) __U členu s exponentem 1 a 0 je třeba tento exponent psát, tedy ...+3x1-2.75x0__
+`5x3-2.65x2+3x-2.75`
+
+1) Na pořadí členů nezáleží
+2) U prvního členu může být +, - nebo nic, v tom případě je člen kladný
+3) Pro desetinná místa použijte tečku
 
 ### English description
+Input must be in the following format:
+`5x3-2.65x2+3x-2.75`
 
-###### Made with love by Martin Picek
+1) The order of terms does not matter
+2) The first term can be marked with +, - or nothing, in which case the term
+is positive
+3) The decimal separator must be a dot
+
+> Made with :heart: by Martin Picek
