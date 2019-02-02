@@ -165,9 +165,12 @@ int evaluateForOneValue(double x){
 	for(int in = 0; in <= numberOfSequences; in++){
 		double val = evaluate(in, x);
 		if((lastVal >= 0 && val < 0) || (lastVal < 0 && val >= 0)) changes++;
-		if(in == numberOfSequences && lastVal < 0 && val == 0) changes--;
+		if(in == numberOfSequences && lastVal < 0 && abs(val) < 0.0000000000001) changes--; //abs(val) < 0.0000000000001 when val == 0, but double can be 0 with some cancer value like -5.77316e-15
+		cout << lastVal << "  ";
 		lastVal = val;
 	}
+	cout << lastVal << " ";
+	cout << "TAKZE: " << x << " " << changes << endl;
 	return changes;
 }
 
@@ -189,6 +192,7 @@ void newton(){
 int main(){
 	int i, in;
 	readInput();
+	rep(i, ex.size()) cout << ex[i] << " ";
 	getMaxInterval();
 	getFirstSequence();
 	getDerivative();
