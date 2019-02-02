@@ -1,4 +1,6 @@
-# Newton-s-method-with-Sturm-sequence
+Newton's method with Sturm sequence
+===
+[![Build Status](https://travis-ci.org/mpicek/Newton-s-method-with-Sturm-sequence.svg?branch=master)](https://travis-ci.org/mpicek/Newton-s-method-with-Sturm-sequence)
 
 #### Newton's method using Sturm sequence. Horner's scheme is also exploited in function evaluate().
 
