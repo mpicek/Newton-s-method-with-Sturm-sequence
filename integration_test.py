@@ -13,8 +13,8 @@ def check_roots(input, *roots):
 	matches = [float(x) for x in matches]
 	matches = [round(x, 2) for x in matches]
 	same = set(matches) == set(roots)
-	print('{input}:\t{success}'
-		.format(input=input, success=(GREEN + 'success' + RESET if same
+	print('{input} {success}'
+		.format(input=input.ljust(max_input_length), success=(GREEN + 'success' + RESET if same
 		else RED + 'fail' + RESET)))
 	if not same:
 		eprint('\tExpected:\t{expected}\n\tActual:  \t{actual}'.format(expected=sorted(list(roots)),
@@ -44,6 +44,8 @@ tests = [
 	['18x4+9x7-4x5+x3-5x2+50x-100', 1.15],
 	['x7+10x6+27x5-57x3-30x2+29x+20', -1, -1, -5, -4]
 ]
+
+max_input_length = max([len(x[0]) for x in tests])
 
 if __name__ == '__main__':
 	if not all([check_roots(x[0], *x[1:]) for x in tests]):
