@@ -22,8 +22,4 @@ Input must be in the following format:
 is positive
 3) The decimal separator must be a dot
 
-### Bugy
-Pro ridky polynomy to udela nejakej shit, zasekne se to
-Mozna lepsi interpretace poli?
-
 > Made with :heart: by Martin Picek
