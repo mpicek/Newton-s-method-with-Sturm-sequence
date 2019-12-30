@@ -11,10 +11,12 @@
 using namespace std;
 
 
-vector<double> ex;
-vector<double> sturm[10000];
+vector<double> ex; // vektor uchovavajici koeficienty
+//12.3x^5 ... ex[5] = 12.3
+//
+vector<double> sturm[10000]; // sturm[k] uchovava k-tou sturmovu posloupnost
 double maxA = 0, maxB = 0;
-int maxExp = 0;
+int maxExp = 0; //jaky dosavadni maximalni exponent (v readInput) a pak udrzuje maxExp
 bool lastSequence = 0;
 int numberOfIntervals = 100000;
 int numberOfSequences = 0;
@@ -51,11 +53,11 @@ void readInput(){
 
 		if(p > maxExp) maxExp = p;
 
-		if (p + 1 > ex.size()) {
+		if (p + 1 > ex.size()) { // doplnim nuly do vektoru
 			for (int i = ex.size(); i < p + 1; i++) ex.push_back(0);
 		}
 
-		ex[p] = sign * k;
+		ex[p] = sign * k; // ulozim do patricnyho exponentu koeficient
 		next++;
 	}
 	// prints out all coefficients (for testing):
@@ -64,7 +66,6 @@ void readInput(){
 }
 
 void getMaxInterval(){
-	int i;
 	double m = 0;
 	for(auto a : ex){
 		if(abs(a) > m) m = abs(a);
@@ -80,8 +81,7 @@ void getFirstSequence(){
 }
 
 void getDerivative(){
-	int i;
-	for(i = 1; i <= maxExp; i++){
+	for(int i = 1; i <= maxExp; i++){
 		sturm[1].push_back(i*ex[i]);
 	}
 }
@@ -124,7 +124,7 @@ void getNextSequence(int numberOfSequence){
 
 	if(sturm[numberOfSequence].size() <= 1) lastSequence = 1;
 
-	rep(e, sturm[numberOfSequence].size()) sturm[numberOfSequence][e] *= -1;
+	rep(e, sturm[numberOfSequence].size()) sturm[numberOfSequence][e] *= -1; //negace zbytku
 
 }
 
@@ -189,7 +189,7 @@ void newton(){
 int main(){
 	int i, in;
 	readInput();
-	rep(i, ex.size()) cout << ex[i] << " ";
+	rep(i, ex.size()) cout << ex[i] << " "; // vypiseme exponenty
 	getMaxInterval();
 	getFirstSequence();
 	getDerivative();
