@@ -94,18 +94,22 @@ void copySequence(int what, int where){
 
 void getNextSequence(int numberOfSequence){ 
 	copySequence(numberOfSequence-2, numberOfSequence);
-	int maxA = sturm[numberOfSequence].size() - 1;
-	int maxB = sturm[numberOfSequence-1].size() - 1;
+	int maxA = sturm[numberOfSequence].size() - 1; // maximalni exponent -2 funkce
+	int maxB = sturm[numberOfSequence-1].size() - 1; //max exp -1 funkce
 
 	int e;
 	double k;
 	
 	while(maxA >= maxB){
-		e = maxA - maxB;
-		k = sturm[numberOfSequence][maxA]/sturm[numberOfSequence-1][maxB];
+		e = maxA - maxB; //tohle je vlastne vydeleni exponentu
+		k = sturm[numberOfSequence][maxA]/sturm[numberOfSequence-1][maxB]; // tohle je vydeleni koef
 
 		for(int in = maxB; in >= 0; in--){
 			sturm[numberOfSequence][in+e] -= k*sturm[numberOfSequence-1][in];
+			// precision error?
+			// ano - vyhazuje to 1.77e-322
+			// kouknout na prednasky z jezka a pak to dodelat
+			cout << sturm[numberOfSequence][maxA] << endl;
 		}
 		while(sturm[numberOfSequence][maxA] == 0){
 			maxA--;
@@ -113,6 +117,7 @@ void getNextSequence(int numberOfSequence){
 				lastSequence = 1;
 			}
 		}
+		// cout << "aa"; //tady dochazi nekdy k zacykleni
 	}
 
 	while(sturm[numberOfSequence].back() == 0){
