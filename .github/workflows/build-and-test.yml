@@ -1,0 +1,31 @@
+name: Build & test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build using g++
+      run: g++ --std=c++11 -o main main.cpp
+    - name: Upload binary
+      uses: actions/upload-artifact@v1
+      with:
+        name: bin
+        path: ./main
+  test:
+    name: Run tests
+    runs-on: ubuntu-18.04
+    needs: build
+    steps:
+      - uses: actions/checkout@v1
+      - name: Download binary
+        uses: actions/download-artifact@v1
+        with:
+          name: bin
+      - name: Make binary executable
+        run: chmod +x ./bin/main
+      - name: Integration test
+        run: cd bin && python3 ../integration_test.py

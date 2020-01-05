@@ -1,5 +1,0 @@
-language: cpp
-dist: xenial
-script:
-  - g++ --std=c++11 -o main main.cpp
-  - python3 integration_test.py
