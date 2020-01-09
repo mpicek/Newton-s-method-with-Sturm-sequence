@@ -5,3 +5,5 @@ Dohledat zdroje k hlavnímu intervalu vyjadřujícímu, kde leží kořeny - nap
 Možná podložit všechno nějakýma zdrojema
 
 označit dennise jako autora parsování vstupu, aby bylo zadání vstupu pohodlnější
+
+Říct, že intervaly jsou od toho, aby specifikovaly víc kořen, abychom se tam newtonem mohli trefit. Není samozřejmě jisté, jestli se tam trefíme, může nám to uletět do prdele.
