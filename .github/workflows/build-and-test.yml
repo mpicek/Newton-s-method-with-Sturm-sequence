@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v1
-    - name: Build using g++
-      run: g++ --std=c++11 -o main main.cpp
+    - name: Make
+      run: make
     - name: Upload binary
       uses: actions/upload-artifact@v1
       with:
