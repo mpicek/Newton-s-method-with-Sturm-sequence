@@ -59,7 +59,7 @@ void readInput(){
 			for (int i = ex.size(); i < p + 1; i++) ex.push_back(0);
 		}
 
-		ex[p] = sign * k; // ulozim do patricnyho exponentu koeficient
+		ex[p] += sign * k; // ulozim do patricnyho exponentu koeficient
 		next++;
 	}
 	// prints out all coefficients (for testing):
