@@ -1,4 +1,5 @@
 #include <iostream>
+#include <inttypes.h>
 #include <vector>
 #include <map>
 #include <stdlib.h>
@@ -18,14 +19,15 @@ vector<double> sturm[10000]; // sturm[k] uchovava k-tou sturmovu posloupnost
 double maxA = 0, maxB = 0;
 int maxExp = 0; //jaky dosavadni maximalni exponent (v readInput) a pak udrzuje maxExp
 bool lastSequence = 0;
-int numberOfIntervals = 100000;
+int numberOfIntervals = 100000; //100000
 int numberOfSequences = 0;
-double precision = 0.00001;
+double precision = 0.000000000001;
+double newtonPrecision = 0.00000001;
 
 map<double, double> intervalsWithRoots;
 
 void throwError(){
-	cout << "debilku" << endl;
+	cout << "debilku" << endl; //TODO dodelat
 }
 
 void readInput(){
@@ -106,10 +108,8 @@ void getNextSequence(int numberOfSequence){
 
 		for(int in = maxB; in >= 0; in--){
 			sturm[numberOfSequence][in+e] -= k*sturm[numberOfSequence-1][in];
-			// precision error?
-			// ano - vyhazuje to 1.77e-322
-			// kouknout na prednasky z jezka a pak to dodelat
-			cout << sturm[numberOfSequence][maxA] << endl;
+			if (abs(sturm[numberOfSequence][in+e]) < precision) // byl tu bug - chceme rict pevne, ze to je 0
+				sturm[numberOfSequence][in+e] = 0;
 		}
 		while(sturm[numberOfSequence][maxA] == 0){
 			maxA--;
@@ -117,7 +117,6 @@ void getNextSequence(int numberOfSequence){
 				lastSequence = 1;
 			}
 		}
-		// cout << "aa"; //tady dochazi nekdy k zacykleni
 	}
 
 	while(sturm[numberOfSequence].back() == 0){
@@ -170,7 +169,7 @@ int evaluateForOneValue(double x){
 	for(int in = 0; in <= numberOfSequences; in++){
 		double val = evaluate(in, x);
 		if((lastVal >= 0 && val < 0) || (lastVal < 0 && val >= 0)) changes++;
-		if(in == numberOfSequences && lastVal < 0 && abs(val) < 0.0000000000001) changes--; //abs(val) < 0.0000000000001 when val == 0, but double can be 0 with some cancer value like -5.77316e-15
+		if(in == numberOfSequences && lastVal < 0 && abs(val) < precision) changes--; 
 		lastVal = val;
 	}
 	return changes;
@@ -179,13 +178,46 @@ int evaluateForOneValue(double x){
 void newton(){
 	for(auto interv : intervalsWithRoots){
 		double lastX = interv.first;
-		double x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
-		double shit = (evaluate(0, lastX)/evaluate(1, lastX));
-		while(abs(lastX-x) > precision){
+		if(abs(evaluate(0,lastX)) < precision){
+			cout << "Root: x = " << 0 << endl;
+			return;
+		}
+		double x = lastX - (evaluate(0, lastX)/evaluate(1,lastX));
+		
+		double minVar = INFINITY;
+		double minLastX;
+		double minX;
+		for(int i = 0; i < 6; i++){
+			//v tomto cyklu rozmlatim interval na mensi kousky, aby nahodou tecna nehodila dalsi hodnotu x uplne mimo interval
+			lastX = interv.first + i*((interv.second -interv.first)/5);
+			double eva = evaluate(0, lastX);
+			if(abs(eva) < precision){ // kdyby to byla nula, tak je to rovnou koren
+				cout << "Root: x = " << 0 << endl;
+				return;
+			}
+			x = lastX - (eva/evaluate(1,lastX));
+			if(minVar > min(abs(x-interv.first), abs(x-interv.second))){ // jak blizko k intervalu
+				minVar = min(abs(x-interv.first), abs(x-interv.second));
+				minX = x;
+				minLastX = lastX;
+			}
+			if(interv.first <= x && x <= interv.second){ // tzn po jednom newtonovi je stale v intervalu
+				//jinak lastX a x jsou spravne ulozene
+				break;
+			}
+			if(i == 5){ // posledni iterace cyklu
+				lastX = minLastX;
+				x = minX;
+			}
+		}
+
+
+		while(abs(lastX-x) > newtonPrecision){
 			lastX = x;
 			if(evaluate(1, lastX) == 0) x = lastX - (evaluate(0, lastX)/0.0000001);
 			else x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
 		}
+		if(abs(x) < precision) x = 0;
 		cout << "Root: x = " << x << endl;
 	}
 }
@@ -194,7 +226,6 @@ void newton(){
 int main(){
 	int i, in;
 	readInput();
-	rep(i, ex.size()) cout << ex[i] << " "; // vypiseme exponenty
 	getMaxInterval();
 	getFirstSequence();
 	getDerivative();
@@ -219,10 +250,10 @@ int main(){
 		int changes = evaluateForOneValue(x);
 		if(lastChanges != changes){
 			if(abs(lastChanges-changes) > 1) cout << abs(lastChanges-changes) << " more roots in one interval " << endl;
-			intervalsWithRoots.insert(make_pair(x, x+(maxB-maxA)/numberOfIntervals));
+			intervalsWithRoots.insert(make_pair(x-(maxB-maxA)/numberOfIntervals, x));
 		}
 		lastChanges = changes;
-	}
+	} //TODO tadyto more roots in one interval
 	
 	cout << "Intervals with roots:" << endl;
 	for(auto interv : intervalsWithRoots){
