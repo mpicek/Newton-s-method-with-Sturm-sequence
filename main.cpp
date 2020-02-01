@@ -6,8 +6,6 @@
 #include <math.h>
 #include <regex>
 
-#define rep(a, b) for(a=0;a<b;a++)
-#define per(a, b) for(a=b;a>=0;a--)
 
 using namespace std;
 
@@ -128,14 +126,14 @@ void getNextSequence(int numberOfSequence){
 
 	if(sturm[numberOfSequence].size() <= 1) lastSequence = 1;
 
-	rep(e, sturm[numberOfSequence].size()) sturm[numberOfSequence][e] *= -1; //negace zbytku
-
+	for(int e = 0; e < sturm[numberOfSequence].size(); e++){ 
+		sturm[numberOfSequence][e] *= -1; //negace zbytku
+	}
 }
 
 void printSturmSequence(int numberOfSequence){
-	int in;
 	cout << "f" << numberOfSequence << "(x) = ";
-	per(in, sturm[numberOfSequence].size()-1){
+	for(int in = sturm[numberOfSequence].size()-1; in >= 0; in--){
 		if(sturm[numberOfSequence][in] != 0){
 			if(sturm[numberOfSequence][in] > 0 && in != sturm[numberOfSequence].size()-1) cout << "+";
 			if(in == 1){
