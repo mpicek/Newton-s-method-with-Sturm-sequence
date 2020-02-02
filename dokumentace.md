@@ -23,7 +23,7 @@ Program je rozdělen do dvou souborů: `main.cpp` a `sturmLib.h`.
 V souboru *main.cpp* je uložena řídící funkce *main()* a v souboru *sturmLib.h* jsou definované pomocné funkce popsané níže.
 
 #### Funkce readInput()
-Funkce načte a naparsuje vstup. Program jsem původně dělal pro zábavu, nevěděl jsem, že ho odevzdám jako zápočtový program a v té době se mi nabídl můj kamarád Dennis Pražák s tím, že mi zlepší parsování vstupu. Jeho parsování je dobré v tom, že akceptuje více zápisů, je možné zadávat členy polynomu v různém pořadí, můžeme zapsat členy stejného řádu několikrát, v tom případě je to sečte.
+Funkce načte a naparsuje vstup, ošetří špatně zapsané vstupy. Program jsem původně dělal pro zábavu, nevěděl jsem, že ho odevzdám jako zápočtový program a v té době se mi nabídl můj kamarád Dennis Pražák s tím, že mi zlepší parsování vstupu. Jeho parsování je dobré v tom, že akceptuje více zápisů, je možné zadávat členy polynomu v různém pořadí, můžeme zapsat členy stejného řádu několikrát, v tom případě je to sečte.
 
 Tato funkce je tedy dílem hlavně mého kamaráda Dennise Pražáka. Zbytek programu jsem již psal sám.
 
