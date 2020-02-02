@@ -7,7 +7,7 @@ Do programu zapíšete polynom, u kterého chcete nalézt kořeny. Vstup zadejte
 2) U prvního členu může být +, - nebo nic, v tom případě je člen kladný
 3) Pro desetinná místa použijte tečku
 
-Program vypíše interval, ve kterém se nachází všechny kořeny, dále vypíše sturmovy posloupnosti a menší intervaly, ve kterých se kořeny nacházejí. Pokud má polynom kořeny, tak je vypíše na konci.
+Program vypíše interval, ve kterém se nachází všechny kořeny, dále vypíše Sturmovy posloupnosti a menší intervaly, ve kterých se kořeny nacházejí. Pokud má polynom kořeny, vypíše je.
 
 Program používá floating-point aritmetiku, proto všechny výsledky __nemusí být přesné__ a je nutno s tím předem počítat. Sturmova metoda taktéž __nehledá vícenásobné kořeny__, pokud je tedy *x* vícenásobný kořen, vypíše ho to pouze jednou. __Metoda hledá pouze reálné kořeny__.
 
@@ -15,9 +15,9 @@ Program používá floating-point aritmetiku, proto všechny výsledky __nemusí
 ## Technická dokumentace
 
 #### Co je sturmova metoda, jak funguje, co dělá, floating point
-Sturmova metoda je metoda Jacquese Sturma pro spočítání rozdílných reálných kořenů v reálném polynomu. Používá se především pro spočítání kořenů v námi specifikovaném intervalu. V této implementaci je spojena Sturmova metoda s metodou Newtonovou, kdy se nejdříve naleznou intervaly, kde se kořeny nachází, a následně se pomocí Newtonovy metody naleznou. Samotná Newtonova metoda by intervaly nenašla, je třeba kořeny nějak izolovat. Proto Sturmova metoda společně s metodou Newtonovou nám dávají vcelku vysokou záruku nalezení všech rozdílných (tzn. ne několikanásobných) reálných kořenů.
+Sturmova metoda je metoda Jacquese Sturma pro spočítání rozdílných reálných kořenů v reálném polynomu. Používá se především pro spočítání kořenů v námi specifikovaném intervalu. V této implementaci je spojena Sturmova metoda s metodou Newtonovou, kdy se nejdříve naleznou intervaly, kde se kořeny nachází, a následně se pomocí Newtonovy metody naleznou. Samotná Newtonova metoda by intervaly nenašla, je třeba kořeny nějak izolovat. Proto Sturmova metoda společně s metodou Newtonovo nám dávají vcelku vysokou záruku nalezení všech rozdílných (tzn. ne několikanásobných) reálných kořenů.
 
-Celý program používá floating-point aritmetiku. V programu je tedy občas použito zaokrouhlování (především na nulu). Stávalo se, že existoval koeficient u členu polynomu extrémně malý a téměř jsme se nemohli dostat na nulu. V tom případě se samozřejmě program zacyklil, protože nové Sturmovy posloupnosti se vytváří do té doby, než by byla poslední posloupnost rovna nule (viz níže). Bylo tedy nutno použít zaokrouhlení. Konečné výsledky zaokrouhlované ale nejsou, uživatel by s nimi měl naložit podle svého.
+Celý program používá floating-point aritmetiku. V programu je tedy občas použito zaokrouhlování (především na nulu). Stávalo se, že koeficient členu polynomu byl extrémně malý a blížil se k nule. V tom případě se samozřejmě program zacyklil, protože nové Sturmovy posloupnosti se vytváří do té doby, než by byla poslední posloupnost rovna nějaké konstantě (viz níže), koeficient by ale stále zapojoval do hry člen polynomu o vyšším exponentu. Bylo tedy nutno použít zaokrouhlení. Konečné výsledky zaokrouhlované ale nejsou, uživatel by s nimi měl naložit podle svého uvážení.
 
 #### Funkce readInput()
 Funkce načte a naparsuje vstup. Program jsem původně dělal pro zábavu, nevěděl jsem, že ho odevzdám jako zápočtový program a v té době se mi nabídl můj kamarád Dennis Pražák s tím, že mi zlepší parsování vstupu. Jeho parsování je dobré v tom, že akceptuje více zápisů, je možné zadávat členy polynomu v různém pořadí, můžeme zapsat členy stejného řádu několikrát, v tom případě je to sečte.
@@ -25,19 +25,19 @@ Funkce načte a naparsuje vstup. Program jsem původně dělal pro zábavu, nev�
 Tato funkce je tedy dílem hlavně mého kamaráda Dennise Pražáka. Zbytek programu jsem již psal sám.
 
 #### Funkce getMaxInterval()
-Existuje odhad intervalu, ve kterém se nachází všechny reálné kořeny polynomu. Je to interval `<-A-1; A+1>`, kde A je největší hodnota z absolutních hodnot koeficientů členů polynomu. Tento interval následně rozkouskujeme na určitý počet intervalů, který je uložen v proměnné *numberOfIntervals*. Číslo by mělo být dostatečně velké, aby nám Newtonova metoda mohla zaručit dobrý výsledek. Tyto intervaly pak budeme vyhodnocovat pomocí Sturmovy metody, ta nám spočítá, kolik se nachází v daném intervalu rozdílných kořenů.
+Existuje odhad intervalu, ve kterém se nachází všechny reálné kořeny polynomu. Je to interval `<-A-1; A+1>`, kde A je maximum z absolutních hodnot koeficientů členů polynomu. Tento interval následně rozkouskujeme na určitý počet intervalů, který je uložen v proměnné *numberOfIntervals*. Číslo by mělo být dostatečně velké, aby nám Newtonova metoda mohla zaručit dobrý výsledek. Tyto intervaly pak budeme vyhodnocovat pomocí Sturmovy metody, ta nám spočítá, kolik se nachází v daném intervalu rozdílných kořenů.
 
 #### Funkce getFirstSequence()
-Vrátí nám první Sturmovu posloupnost, což je vlastně sám polynom. Proto nám pouze zkopíruje sekvenci z *ex* (kde je polynom uložen) do sturm[0].
+Vrátí nám první Sturmovu posloupnost, což je vlastně sám polynom. Proto nám pouze zkopíruje sekvenci z *ex* (kde je polynom uložen) do sturm[0] (kde jsou posloupnosti uloženy).
 
 #### Funkce getDerivative()
 Toto je funkce vracející první derivaci polynomu, což je zároveň druhá Sturmova posloupnost.
 
 #### Funkce getNextSequence(int numberOfSequence)
-Vytvoří další Sturmovu posloupnost. Kolikátou posloupnost? Ta je určena v parametru. Pozor, počítá se od nuly (tzn. 2. posloupnost znamená, že *numberOfSequence* = 1). Tato funkce slouží pro spočtení posloupností od druhé dál, jelikož první posloupnost je daný interval a druhá posloupnost je jeho derivace. N-tá posloupnost se vytvoří vydělením (n-2)-hé posloupností posloupností (n-1)-ní. Záporný zbytek po dělení je naše n-tá posloupnost. Takto se pokračuje, dokud není zbytek po dělení roven nule. V tom případě je daná posloupnost poslední. K vypsání dané posloupnosti slouží funkce __printSturmSequence(int numberOfSequence)__.
+Vytvoří další Sturmovu posloupnost. Kolikátou posloupnost? Ta je určena v parametru. Pozor, počítá se od nuly (tzn. 2. posloupnost znamená, že *numberOfSequence* = 1). Tato funkce slouží pro spočtení posloupností od druhé dál, jelikož první posloupnost je daný polynom a druhá posloupnost je jeho derivace. N-tá posloupnost se vytvoří vydělením (n-2)-hé posloupnosti posloupností (n-1)-ní. Záporný zbytek po dělení je naše n-tá posloupnost. Takto se pokračuje, dokud není zbytek po dělení roven nějaké konstantě. V tom případě je daná posloupnost poslední. K vypsání dané posloupnosti slouží funkce __printSturmSequence(int numberOfSequence)__.
 
 #### evaluateForOneValue(double x)
-Po vytvoření všech posloupností vezmu hodnotu *x* z každého intervalu a dosadím ji postupně do všech posloupností. Toto *x* je první nejmenší hodnota intevalu. Za dosazení se stará funkce __evaluate(int sequence, double x)__, takže funkce evaluateForOneValue() postupně volá tuto funkci pro každou posloupnost. 
+Po vytvoření všech posloupností vezmu hodnotu *x* z každého intervalu a dosadím ji postupně do všech posloupností. Toto *x* je nejmenší hodnota intevalu. Za dosazení se stará funkce __evaluate(int sequence, double x)__, takže funkce evaluateForOneValue() postupně volá tuto funkci pro každou posloupnost. 
 Pro každé *x* tedy získáme *n* hodnot. Důležitý je ale pouze počet změn znaménka hodnoty. Tento počet funkce evaluateForOneValue() vrací.
 
 #### main()
