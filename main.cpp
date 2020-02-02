@@ -44,7 +44,7 @@ int main(){
 			intervalsWithRoots.insert(make_pair(x-(maxB-maxA)/numberOfIntervals, x));
 		}
 		lastChanges = changes;
-	} //TODO tadyto more roots in one interval
+	} 
 	
 	cout << "Intervals with roots:" << endl;
 	for(auto interv : intervalsWithRoots){

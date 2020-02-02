@@ -17,7 +17,7 @@ using namespace std;
 
 vector<double> ex; // vektor uchovavajici koeficienty
 //12.3x^5 ... ex[5] = 12.3
-//
+
 vector<double> sturm[10000]; // sturm[k] uchovava k-tou sturmovu posloupnost
 double maxA = 0, maxB = 0;
 int maxExp = 0; //jaky dosavadni maximalni exponent (v readInput) a pak udrzuje maxExp
@@ -29,26 +29,37 @@ double newtonPrecision = 0.00000001;
 
 map<double, double> intervalsWithRoots;
 
+//exceptions
 void throwError();
 
+//funkce na parsovani vstupu
 void readInput();
 
+//ziska interval, kde urcite jsou vsechny koreny
 void getMaxInterval();
 
+//spocita prvni sturmovu posloupnost
 void getFirstSequence();
 
+//spocte derivaci (z polynomu)
 void getDerivative();
 
+//pouze zkopiruje sekvenci
 void copySequence(int what, int where);
 
+//spocte dalsi sturmovu posloupnost - pokud je to ovsem posloupnost cislo 2 a vice
 void getNextSequence(int numberOfSequence); 
 
+//vypise sturmovu posloupnost
 void printSturmSequence(int numberOfSequence);
 
+//spocte hodnotu posloupnosti po dosazeni do x
 double evaluate(int sequence, double x);
 
+//funkce ohodnoti vsechny posloupnosti - dosadi za x hodnotu
 int evaluateForOneValue(double x);
 
+//newtonova metoda
 void newton();
 
 
