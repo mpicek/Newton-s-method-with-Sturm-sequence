@@ -68,6 +68,7 @@ void throwError(){
 }
 
 void readInput(){
+	cout << "Input polynomial: ";
 	string line;
 	getline(cin, line);
 	regex rgx(R"(([+-]|^)\s*((?:\d+\.\d+|\d*))([xX]?)(\d*))",
