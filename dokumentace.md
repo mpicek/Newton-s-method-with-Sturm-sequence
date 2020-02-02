@@ -14,10 +14,13 @@ Program používá floating-point aritmetiku, proto všechny výsledky __nemusí
 
 ## Technická dokumentace
 
-#### Co je sturmova metoda, jak funguje, co dělá, floating point
+#### Co je Sturmova metoda a k čemu slouží?
 Sturmova metoda je metoda Jacquese Sturma pro spočítání rozdílných reálných kořenů v reálném polynomu. Používá se především pro spočítání kořenů v námi specifikovaném intervalu. V této implementaci je spojena Sturmova metoda s metodou Newtonovou, kdy se nejdříve naleznou intervaly, kde se kořeny nachází, a následně se pomocí Newtonovy metody naleznou. Samotná Newtonova metoda by intervaly nenašla, je třeba kořeny nějak izolovat. Proto Sturmova metoda společně s metodou Newtonovo nám dávají vcelku vysokou záruku nalezení všech rozdílných (tzn. ne několikanásobných) reálných kořenů.
 
 Celý program používá floating-point aritmetiku. V programu je tedy občas použito zaokrouhlování (především na nulu). Stávalo se, že koeficient členu polynomu byl extrémně malý a blížil se k nule. V tom případě se samozřejmě program zacyklil, protože nové Sturmovy posloupnosti se vytváří do té doby, než by byla poslední posloupnost rovna nějaké konstantě (viz níže), koeficient by ale stále zapojoval do hry člen polynomu o vyšším exponentu. Bylo tedy nutno použít zaokrouhlení. Konečné výsledky zaokrouhlované ale nejsou, uživatel by s nimi měl naložit podle svého uvážení.
+
+Program je rozdělen do dvou souborů: `main.cpp` a `sturmLib.h`.
+V souboru *main.cpp* je uložena řídící funkce *main()* a v souboru *sturmLib.h* jsou definované pomocné funkce popsané níže.
 
 #### Funkce readInput()
 Funkce načte a naparsuje vstup. Program jsem původně dělal pro zábavu, nevěděl jsem, že ho odevzdám jako zápočtový program a v té době se mi nabídl můj kamarád Dennis Pražák s tím, že mi zlepší parsování vstupu. Jeho parsování je dobré v tom, že akceptuje více zápisů, je možné zadávat členy polynomu v různém pořadí, můžeme zapsat členy stejného řádu několikrát, v tom případě je to sečte.
@@ -40,12 +43,12 @@ Vytvoří další Sturmovu posloupnost. Kolikátou posloupnost? Ta je určena v 
 Po vytvoření všech posloupností vezmu hodnotu *x* z každého intervalu a dosadím ji postupně do všech posloupností. Toto *x* je nejmenší hodnota intevalu. Za dosazení se stará funkce __evaluate(int sequence, double x)__, takže funkce evaluateForOneValue() postupně volá tuto funkci pro každou posloupnost. 
 Pro každé *x* tedy získáme *n* hodnot. Důležitý je ale pouze počet změn znaménka hodnoty. Tento počet funkce evaluateForOneValue() vrací.
 
-#### main()
+#### Funkce main()
 Funkce main vše řídí - načte vstup, zavolá funkce pro spočtení všech posloupností a pro všechny intervaly získá počet změn znamének.
 Počet změn znamének v bodě *a* pojmenujme A a počet změn znamének v bodě *b* pojmenujme B. Počet rozdílných kořenů v intervalu <a,b] je pak roven hodnotě A-B. My se ale rozdílu většímu než jedna snažíme vyhnout, Newtonova metoda by pak měla problém naleznout správný kořen. Problém odstraníme zvětšením počtu intervalů. Naše *a* a *b* jsou vždy začátky intervalů.
 Funkce main() si zapamatuje intevaly, ve kterých jsou kořeny a zavolá na ně funkci newton().
 
-#### newton()
+#### Funkce newton()
 Intervaly uložené v *intervalsWithRoots* prohledá Newtonovo metodou. Ta pomocí první derivace (tzn. tečny na křivku) se snaží přiblížit ke kořeni. Derivace může mít ale špatný sklon a kvůli tomu se můžeme dostat mimo interval, což může způsobit, že kořen vůbec nenalezneme. Proto v této funkci interval rozdělíme ještě na menší a zkouším Newtonovu metodu spustit z různých hodnot na daném intervalu. Těchto začátečních bodů je 6 a jsou rovnoměrně rozmístěné. Newtonova metoda se opakuje do té doby, než je kořen nalezen s určitou přesností. Tato přesnost je uložena v *newtonPrecision*.
 Funkce kořeny vypíše a výsledky nijak nezaokrouhluje. 
 
