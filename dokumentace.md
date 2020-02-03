@@ -6,6 +6,7 @@ Do programu zapíšete polynom, u kterého chcete nalézt kořeny. Vstup zadejte
 1) Na pořadí členů nezáleží
 2) U prvního členu může být +, - nebo nic, v tom případě je člen kladný
 3) Pro desetinná místa použijte tečku
+4) Koeficienty jsou reálná čísla (místo desetinné čárky pište tečku) a exponenty jsou přirozená čísla
 
 Program vypíše interval, ve kterém se nachází všechny kořeny, dále vypíše Sturmovy posloupnosti a menší intervaly, ve kterých se kořeny nacházejí. Pokud má polynom kořeny, vypíše je.
 
