@@ -29,9 +29,6 @@ double newtonPrecision = 0.00000001;
 
 map<double, double> intervalsWithRoots;
 
-//exceptions
-void throwError();
-
 //funkce na parsovani vstupu
 void readInput();
 
@@ -61,11 +58,6 @@ int evaluateForOneValue(double x);
 
 //newtonova metoda
 void newton();
-
-
-void throwError(){
-	cout << "debilku" << endl; //TODO dodelat
-}
 
 void readInput(){
 	cout << "Input polynomial: ";
