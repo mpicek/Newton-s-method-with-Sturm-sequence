@@ -230,48 +230,53 @@ int evaluateForOneValue(double x){
 
 void newton(){
 	for(auto interv : intervalsWithRoots){
+		int korenNalezen = 0;
 		double lastX = interv.first;
 		if(abs(evaluate(0,lastX)) < precision){
 			cout << "Root: x = " << 0 << endl;
-			return;
+			korenNalezen = 1;	
 		}
 		double x = lastX - (evaluate(0, lastX)/evaluate(1,lastX));
 		
-		double minVar = INFINITY;
-		double minLastX;
-		double minX;
-		for(int i = 0; i < 6; i++){
-			//v tomto cyklu rozmlatim interval na mensi kousky, aby nahodou tecna nehodila dalsi hodnotu x uplne mimo interval
-			lastX = interv.first + i*((interv.second -interv.first)/5);
-			double eva = evaluate(0, lastX);
-			if(abs(eva) < precision){ // kdyby to byla nula, tak je to rovnou koren
-				cout << "Root: x = " << 0 << endl;
-				return;
-			}
-			x = lastX - (eva/evaluate(1,lastX));
-			if(minVar > min(abs(x-interv.first), abs(x-interv.second))){ // jak blizko k intervalu
-				minVar = min(abs(x-interv.first), abs(x-interv.second));
-				minX = x;
-				minLastX = lastX;
-			}
-			if(interv.first <= x && x <= interv.second){ // tzn po jednom newtonovi je stale v intervalu
-				//jinak lastX a x jsou spravne ulozene
-				break;
-			}
-			if(i == 5){ // posledni iterace cyklu
-				lastX = minLastX;
-				x = minX;
+		if(!korenNalezen){
+			double minVar = INFINITY;
+			double minLastX;
+			double minX;
+			for(int i = 0; i < 6; i++){
+				//v tomto cyklu rozmlatim interval na mensi kousky, aby nahodou tecna nehodila dalsi hodnotu x uplne mimo interval
+				lastX = interv.first + i*((interv.second -interv.first)/5);
+				double eva = evaluate(0, lastX);
+				if(abs(eva) < precision){ // kdyby to byla nula, tak je to rovnou koren
+					cout << "Root: x = " << 0 << endl;
+					korenNalezen = 1;
+					break;
+				}
+				x = lastX - (eva/evaluate(1,lastX));
+				if(minVar > min(abs(x-interv.first), abs(x-interv.second))){ // jak blizko k intervalu
+					minVar = min(abs(x-interv.first), abs(x-interv.second));
+					minX = x;
+					minLastX = lastX;
+				}
+				if(interv.first <= x && x <= interv.second){ // tzn po jednom newtonovi je stale v intervalu
+					//jinak lastX a x jsou spravne ulozene
+					break;
+				}
+				if(i == 5){ // posledni iterace cyklu
+					lastX = minLastX;
+					x = minX;
+				}
 			}
 		}
 
-
-		while(abs(lastX-x) > newtonPrecision){
-			lastX = x;
-			if(evaluate(1, lastX) == 0) x = lastX - (evaluate(0, lastX)/0.0000001);
-			else x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
+		if(!korenNalezen){
+			while(abs(lastX-x) > newtonPrecision){
+				lastX = x;
+				if(evaluate(1, lastX) == 0) x = lastX - (evaluate(0, lastX)/0.0000001);
+				else x = lastX - (evaluate(0, lastX)/evaluate(1, lastX));
+			}
+			if(abs(x) < precision) x = 0;
+			cout << "Root: x = " << x << endl;
 		}
-		if(abs(x) < precision) x = 0;
-		cout << "Root: x = " << x << endl;
 	}
 }
 
