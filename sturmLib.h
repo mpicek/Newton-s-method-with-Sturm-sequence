@@ -71,13 +71,19 @@ void readInput(){
 	cout << "Input polynomial: ";
 	string line;
 	getline(cin, line);
-	regex rgx(R"(([+-]|^)\s*((?:\d+\.\d+|\d*))([xX]?)(\d*))",
+	regex rgx(R"(\s*([+-]|^)\s*(\d+\.\d+|\d*)([xX]?)(\d*)\s*)",
 		regex_constants::ECMAScript);
-	sregex_iterator next(line.begin(), line.end(), rgx);
+	sregex_iterator next(line.begin(), line.end(), rgx, std::regex_constants::match_continuous);
 	sregex_iterator end;
+	int characters_parsed = 0;
 	while (next != end) {
 		smatch match = *next;
 		string match_str = match.str(0);
+		// special case - the regex can match a single + or -
+		// in that case there is no coefficient, no x and no exponent
+		// break causes exit(1); after the while block
+		if(match.str(2) == "" && match.str(3) == "" && match.str(4) == "") break;
+		characters_parsed += match_str.length();
 		int sign = 1;
 		if (match.str(1) == "-") sign = -1;
 		// is there an x?
@@ -100,6 +106,23 @@ void readInput(){
 		ex[p] += sign * k; // ulozim do patricnyho exponentu koeficient
 		next++;
 	}
+
+	// osetreni vstupu
+	if (characters_parsed < line.length()) {
+		cout << "Chyba pri nacitani vstupu:" << endl;
+		cout << line << endl;
+		cout << string(characters_parsed, ' ') << string(line.length() - characters_parsed, '^') << endl;
+		exit(EXIT_FAILURE);
+	}
+	if (line.length() == 0) {
+		cout << "Prazdny vstup" << endl;
+		exit(EXIT_FAILURE);
+	}
+	if (ex.size() == 1) {
+		cout << "Konstanta neni polynom" << endl;
+		exit(EXIT_FAILURE);
+	}
+
 	// prints out all coefficients (for testing):
 	// int i = 0;
 	// rep(i, ex.size()) cout << i << ": " << ex[i] << endl;
