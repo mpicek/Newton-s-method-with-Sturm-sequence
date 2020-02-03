@@ -28,13 +28,16 @@ Celý program používá floating-point aritmetiku. V programu je tedy občas po
 Program je rozdělen do dvou souborů: `main.cpp` a `sturmLib.h`.
 V souboru *main.cpp* je uložena řídící funkce *main()* a v souboru *sturmLib.h* jsou definované pomocné funkce popsané níže.
 
+#### Průběh programu
+V programu se nejdříve načte vstup a pokud je zadaný špatně, vypíše se chybová hláška. Následně se z polynomu získá interval, ve kterém leží všechny kořeny (zdroj 1), ten se rozkouskuje na menší intervaly. Pak přichází na řadu spočtení všech Sturmových posloupností (zdroj 2-4), do kterých se dosadí hodnoty z našich "menších intervalů". Sturmova metoda nám zjistí, kolik kořenů se v daných intervalech nachází. Snažíme se udělat intervalů tolik, aby se nestalo, že je více kořenů v jednom intervalu, následně bychom totiž měli problém s nalezením všech těchto kořenů. Kořeny najdeme v dalším kroku pomocí Newtonovy metody (zdroj 5). Bohužel se v praxi vyskytneme s problémem, kdy tečna na graf má sklon takový, že se s osou x protne mimo interval, ve kterém hledáme (a to často opravdu daleko od něj), proto náš malý interval rozkouskujeme na dalších 6 podintervalů a zkoušíme Newtonovu metodu spustit na každém z nich, nejlepší výsledek pak použijeme. Kořeny vypíšeme. Detailní průběch algoritmu je rozepsán v následujícím popisu funkcí v pořadí, v jakém jsou volány.
+
 #### Funkce readInput()
 Funkce načte a naparsuje vstup, ošetří špatně zapsané vstupy. Program jsem původně dělal pro zábavu, nevěděl jsem, že ho odevzdám jako zápočtový program a v té době se mi nabídl můj kamarád Dennis Pražák s tím, že mi zlepší parsování vstupu. Jeho parsování je dobré v tom, že akceptuje více zápisů, je možné zadávat členy polynomu v různém pořadí, můžeme zapsat členy stejného řádu několikrát, v tom případě je to sečte.
 
 Tato funkce je tedy dílem mého kamaráda Dennise Pražáka. Zbytek programu jsem již psal sám.
 
 #### Funkce getMaxInterval()
-Existuje odhad intervalu, ve kterém se nachází všechny reálné kořeny polynomu. Je to interval `<-A-1; A+1>`, kde A je maximum z absolutních hodnot koeficientů členů polynomu. Tento interval následně rozkouskujeme na určitý počet intervalů, který je uložen v proměnné *numberOfIntervals*. Číslo by mělo být dostatečně velké, aby nám Newtonova metoda mohla zaručit dobrý výsledek. Tyto intervaly pak budeme vyhodnocovat pomocí Sturmovy metody, ta nám spočítá, kolik se nachází v daném intervalu rozdílných kořenů. Díky tomu dokážeme kořeny izolovat.
+Existuje odhad intervalu, ve kterém se nachází všechny reálné kořeny polynomu. Je to interval `<-A-1; A+1>` (zdroj 1), kde A je maximum z absolutních hodnot koeficientů členů polynomu. Tento interval následně rozkouskujeme na určitý počet intervalů, který je uložen v proměnné *numberOfIntervals*. Číslo by mělo být dostatečně velké, aby nám Newtonova metoda mohla zaručit dobrý výsledek. Tyto intervaly pak budeme vyhodnocovat pomocí Sturmovy metody, ta nám spočítá, kolik se nachází v daném intervalu rozdílných kořenů. Díky tomu dokážeme kořeny izolovat.
 
 #### Funkce getFirstSequence()
 Vrátí nám první Sturmovu posloupnost, což je vlastně sám polynom. Proto nám pouze zkopíruje sekvenci z *ex* (kde je polynom uložen) do sturm[0] (kde jsou posloupnosti uloženy).
@@ -51,13 +54,23 @@ Pro každé *x* tedy získáme *n* hodnot. Důležitý je ale pouze počet změn
 
 #### Funkce main()
 Funkce main vše řídí - načte vstup, zavolá funkce pro spočtení všech posloupností a pro všechny intervaly získá počet změn znamének.
-Počet změn znamének v bodě *a* pojmenujme A a počet změn znamének v bodě *b* pojmenujme B. Počet rozdílných kořenů v intervalu <a,b] je pak roven hodnotě A-B. My se ale rozdílu většímu než jedna snažíme vyhnout, Newtonova metoda by pak měla problém naleznout správný kořen. Problém odstraňuji dostatečným počtem intervalů, ve kterých je Sturmova metoda vyhodnocena. Naše *a* a *b* jsou vždy začátky a konce intervalů.
+Počet změn znamének v bodě *a* pojmenujme A a počet změn znamének v bodě *b* pojmenujme B. Počet rozdílných kořenů v intervalu <a,b] je pak roven hodnotě A-B (zdroj 3). My se ale rozdílu většímu než jedna snažíme vyhnout, Newtonova metoda by pak měla problém naleznout správný kořen. Problém odstraňuji dostatečným počtem intervalů, ve kterých je Sturmova metoda vyhodnocena. Naše *a* a *b* jsou vždy začátky a konce intervalů.
 Funkce main() si zapamatuje intevaly, ve kterých jsou kořeny, a zavolá na ně funkci newton().
 
 #### Funkce newton()
 Intervaly uložené v *intervalsWithRoots* prohledá Newtonovo metodou. Ta pomocí první derivace (tzn. tečny na křivku) se snaží přiblížit ke kořeni. Derivace může mít ale špatný sklon a kvůli tomu se můžeme dostat mimo interval, což může způsobit, že kořen vůbec nenalezneme. Proto v této funkci interval rozdělíme ještě na menší a zkouším Newtonovu metodu spustit z různých hodnot na daném intervalu. Těchto začátečních bodů je 6 a jsou rovnoměrně rozmístěné. Newtonova metoda se opakuje do té doby, než je kořen nalezen s určitou přesností. Tato přesnost je uložena v *newtonPrecision*.
 Funkce nalezené kořeny vypíše.
 
+### Zdroje
 
+Zdroj 1: Maximální interval, kde kořeny leží
+Zdroje 2-4: Sturmova metoda
+Zdroj 5: Newtonova metoda
+
+1) Vladimír Kořínek, Základy algebry, 1953 (vydala Československá akademie věd)
+2) http://mathworld.wolfram.com/SturmFunction.html
+3) https://mathsci2.appstate.edu/~cookwj/sage/algebra/Sturms_method-advanced.html
+4) https://en.wikipedia.org/wiki/Sturm%27s_theorem
+5) https://amsi.org.au/ESA_Senior_Years/SeniorTopic3/3j/3j_2content_2.html
 
 > Made with :heart: by Martin Picek
