@@ -11,13 +11,14 @@ Program vypíše interval, ve kterém se nachází všechny kořeny, dále vypí
 
 Program používá floating-point aritmetiku, proto všechny výsledky __nemusí být přesné__ a je nutno s tím předem počítat. Sturmova metoda taktéž __nehledá vícenásobné kořeny__, pokud je tedy *x* vícenásobný kořen, vypíše ho to pouze jednou. __Metoda hledá pouze reálné kořeny__.
 
+Doporučuje se počítat s polynomy o maximálním exponentu zhruba 50 a přiměřeně velkými koeficienty (do 100000) u členů polynomu. Program zvládne pracovat s exponenty i koeficienty mnohonásobně vyššími než je toto doporučení, výsledky pak ale nejsou zaručené, jejich kvalita může být horší, jelikož celkový interval, ve kterém hledáme, je mnohonásobně zvětšený.
 
 ## Technická dokumentace
 
 #### Co je Sturmova metoda a k čemu slouží?
 Sturmova metoda je metoda Jacquese Sturma pro spočítání rozdílných reálných kořenů v reálném polynomu. Používá se především pro spočítání kořenů v námi specifikovaném intervalu. V této implementaci je spojena Sturmova metoda s metodou Newtonovou, kdy se nejdříve naleznou intervaly, kde se kořeny nachází, a následně se pomocí Newtonovy metody naleznou. Samotná Newtonova metoda by intervaly nenašla, je třeba kořeny nějak izolovat. Proto Sturmova metoda společně s metodou Newtonovo nám dávají vcelku vysokou záruku nalezení všech rozdílných (tzn. ne několikanásobných) reálných kořenů.
 
-Celý program používá floating-point aritmetiku. V programu je tedy občas použito zaokrouhlování (především na nulu). Stávalo se, že koeficient členu polynomu byl extrémně malý a blížil se k nule. V tom případě se samozřejmě program zacyklil, protože nové Sturmovy posloupnosti se vytváří do té doby, než by byla poslední posloupnost rovna nějaké konstantě (viz níže), koeficient by ale stále zapojoval do hry člen polynomu o vyšším exponentu. Bylo tedy nutno použít zaokrouhlení. Konečné výsledky zaokrouhlované ale nejsou, uživatel by s nimi měl naložit podle svého uvážení.
+Celý program používá floating-point aritmetiku. V programu je tedy občas použito zaokrouhlování (především na nulu). Stávalo se, že koeficient členu polynomu byl extrémně malý a blížil se k nule. V tom případě se samozřejmě program zacyklil, protože nové Sturmovy posloupnosti se vytváří do té doby, než by byla poslední posloupnost rovna nějaké konstantě (viz níže), koeficient by ale stále zapojoval do hry člen polynomu o vyšším exponentu. Bylo tedy nutno použít zaokrouhlení. Konečné výsledky zaokrouhlované ale být nemusí, uživatel by s nimi měl naložit podle svého uvážení. Proto pokud kořen má vyjít 0, je možné, že hodnota vypsána programem bude blízká nule, ale nebude rovna nule.
 
 Program je rozdělen do dvou souborů: `main.cpp` a `sturmLib.h`.
 V souboru *main.cpp* je uložena řídící funkce *main()* a v souboru *sturmLib.h* jsou definované pomocné funkce popsané níže.
@@ -50,5 +51,5 @@ Funkce main() si zapamatuje intevaly, ve kterých jsou kořeny a zavolá na ně 
 
 #### Funkce newton()
 Intervaly uložené v *intervalsWithRoots* prohledá Newtonovo metodou. Ta pomocí první derivace (tzn. tečny na křivku) se snaží přiblížit ke kořeni. Derivace může mít ale špatný sklon a kvůli tomu se můžeme dostat mimo interval, což může způsobit, že kořen vůbec nenalezneme. Proto v této funkci interval rozdělíme ještě na menší a zkouším Newtonovu metodu spustit z různých hodnot na daném intervalu. Těchto začátečních bodů je 6 a jsou rovnoměrně rozmístěné. Newtonova metoda se opakuje do té doby, než je kořen nalezen s určitou přesností. Tato přesnost je uložena v *newtonPrecision*.
-Funkce kořeny vypíše a výsledky nijak nezaokrouhluje. 
+Funkce nalezené kořeny vypíše.
 
