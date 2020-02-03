@@ -25,7 +25,7 @@ V souboru *main.cpp* je uložena řídící funkce *main()* a v souboru *sturmLi
 #### Funkce readInput()
 Funkce načte a naparsuje vstup, ošetří špatně zapsané vstupy. Program jsem původně dělal pro zábavu, nevěděl jsem, že ho odevzdám jako zápočtový program a v té době se mi nabídl můj kamarád Dennis Pražák s tím, že mi zlepší parsování vstupu. Jeho parsování je dobré v tom, že akceptuje více zápisů, je možné zadávat členy polynomu v různém pořadí, můžeme zapsat členy stejného řádu několikrát, v tom případě je to sečte.
 
-Tato funkce je tedy dílem hlavně mého kamaráda Dennise Pražáka. Zbytek programu jsem již psal sám.
+Tato funkce je tedy dílem mého kamaráda Dennise Pražáka. Zbytek programu jsem již psal sám.
 
 #### Funkce getMaxInterval()
 Existuje odhad intervalu, ve kterém se nachází všechny reálné kořeny polynomu. Je to interval `<-A-1; A+1>`, kde A je maximum z absolutních hodnot koeficientů členů polynomu. Tento interval následně rozkouskujeme na určitý počet intervalů, který je uložen v proměnné *numberOfIntervals*. Číslo by mělo být dostatečně velké, aby nám Newtonova metoda mohla zaručit dobrý výsledek. Tyto intervaly pak budeme vyhodnocovat pomocí Sturmovy metody, ta nám spočítá, kolik se nachází v daném intervalu rozdílných kořenů.
