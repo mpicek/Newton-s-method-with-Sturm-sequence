@@ -60,7 +60,7 @@ int evaluateForOneValue(double x);
 void newton();
 
 void readInput(){
-	cout << "The lower maximum exponent, the better results guaranteed." << endl;
+	cout << "The lower maximum exponent and coefficient, the better results guaranteed." << endl;
 	cout << "Input polynomial: ";
 	string line;
 	getline(cin, line);
