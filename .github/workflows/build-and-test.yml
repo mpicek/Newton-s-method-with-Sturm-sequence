@@ -1,0 +1,14 @@
+name: Build & test
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v1
+    - name: Build
+      run: make
+    - name: Test
+      run: make test

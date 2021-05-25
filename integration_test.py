@@ -1,43 +1,13 @@
 import subprocess, sys, os
 import re
+from typing import Tuple
 
 RED   = "\033[1;31m"
 GREEN = "\033[0;32m"
 RESET = "\033[0;0m"
 
-def check_roots(input, *roots):
-	regex = r'^Root: x = (\S+)'
-	output = get_output(input)
-	roots = [float(x) for x in roots]
-	matches = re.findall(regex, output, re.MULTILINE)
-	matches = [float(x) for x in matches]
-	matches = [round(x, 2) for x in matches]
-	same = set(matches) == set(roots)
-	print('{input} {success}'
-		.format(input=input.ljust(max_input_length), success=(GREEN + 'success' + RESET if same
-		else RED + 'fail' + RESET)))
-	if not same:
-		eprint('\tExpected:\t{expected}\n\tActual:  \t{actual}'.format(expected=sorted(list(roots)),
-			actual=sorted(matches)))
-	return same
-
-def get_output(input):
-	cmd = ['./main']
-	if os.name == 'nt':
-		cmd = ['main.exe']
-	input = input.encode('utf-8')
-	result = subprocess.run(cmd, stdout=subprocess.PIPE, input=input)
-	output = result.stdout.decode('utf-8')
-	return output
-
-def fail():
-	sys.exit(1)
-
-def success():
-	sys.exit(0)
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+DEFAULT_EXECUTABLE = "./main" if os.name != 'nt' else 'main.exe'
+executable = DEFAULT_EXECUTABLE
 
 tests = [
 	['x3+4x2-3x-18', -3, 2],
@@ -52,7 +22,36 @@ tests = [
 
 max_input_length = max([len(x[0]) for x in tests])
 
+def get_output(input: str, executable: str) -> str:
+	"""Starts an executable, passes input into its STDIN and returns STDOUT"""
+	input = input.encode('utf-8')
+	result = subprocess.run([executable], stdout=subprocess.PIPE, input=input)
+	output = result.stdout.decode('utf-8')
+	return output
+
+def check_roots(input: str, *roots: Tuple[float]) -> bool:
+	regex = r'^Root: x = (\S+)'
+	output = get_output(input, executable)
+	roots = [float(x) for x in roots]
+	matches = re.findall(regex, output, re.MULTILINE)
+	matches = [float(x) for x in matches]
+	matches = [round(x, 2) for x in matches]
+	same = set(matches) == set(roots)
+	print('{input} {success}'
+		.format(input=input.ljust(max_input_length), success=(GREEN + 'success' + RESET if same
+		else RED + 'fail' + RESET)))
+	if not same:
+		print('\tExpected:\t{expected}\n\tActual:  \t{actual}'
+			.format(expected=sorted(list(roots)), actual=sorted(matches)),
+			file=sys.stderr)
+	return same
+
 if __name__ == '__main__':
+	if len(sys.argv) >= 2:
+		executable = sys.argv[1]
+	else:
+		executable = DEFAULT_EXECUTABLE
+
 	if not all([check_roots(x[0], *x[1:]) for x in tests]):
-		fail()
-	success()
+		sys.exit(1)
+	sys.exit(0)

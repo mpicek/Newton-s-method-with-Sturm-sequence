@@ -1,6 +1,6 @@
 Newton's method with Sturm sequence
 ===
-[![Build Status](https://travis-ci.org/mpicek/Newton-s-method-with-Sturm-sequence.svg?branch=master)](https://travis-ci.org/mpicek/Newton-s-method-with-Sturm-sequence)
+[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/mpicek/Newton-s-method-with-Sturm-sequence/Build%20&%20test)](https://github.com/mpicek/Newton-s-method-with-Sturm-sequence/actions)
 
 ## Uživatelská dokumentace
 
